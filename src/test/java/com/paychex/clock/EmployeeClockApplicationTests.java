@@ -1,4 +1,4 @@
-package com.paychex.employeeclock;
+package com.paychex.clock;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
