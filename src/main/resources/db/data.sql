@@ -1,0 +1,1 @@
+insert into users (id, first_name, last_name, email, password) values (1, 'Admin', 'User', 'admin@admin.com', '$2a$10$MY4vyYK6QhVbUzNd0tExsuPHKWqVCGgBp.NOTLFUxHvJZIiCJ4yzi')

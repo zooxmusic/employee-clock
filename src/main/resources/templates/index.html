@@ -23,7 +23,11 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#" th:href="@{/}">Employee Management System</a>
+				<a class="navbar-brand" href="#" th:href="@{/}">Simple Time Clock</a>
+				<form class="form-inline">
+					<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				</form>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
@@ -65,8 +69,8 @@
 					<td th:text="${employee.lastName}"></td>
 					<td th:text="${employee.email}"></td>
 					<td>
-						<a th:href="@{/showFormForStartShift/{id}(id=${employee.id})}" class="btn btn-primary">Punch In</a>
-						<a th:href="@{/showFormForUpdate/{id}(id=${employee.id})}" class="btn btn-primary">Update</a>
+						<a th:href="@{/showFormTimeClock/{id}(id=${employee.id})}" class="btn btn-primary">Time Clock</a>
+						<a th:href="@{/showFormForUpdate/{id}(id=${employee.id})}" class="btn btn-secondary">Edit</a>
 					    <a th:href="@{/deleteEmployee/{id}(id=${employee.id})}" class="btn btn-danger">Delete</a>
 					</td>
 				</tr>

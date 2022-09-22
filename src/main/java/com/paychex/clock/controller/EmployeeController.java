@@ -5,6 +5,7 @@ import java.util.List;
 import com.paychex.clock.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,16 @@ import com.paychex.clock.service.EmployeeService;
 public class EmployeeController {
 
 	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+
+	@Autowired
 	private EmployeeService employeeService;
 	
 	// display list of employees
 	@GetMapping("/")
 	public String viewHomePage(Model model) {
+		System.out.println("PASSWORD");
+		System.out.println(passwordEncoder.encode("admin"));
 		return findPaginated(1, "firstName", "asc", model);		
 	}
 	

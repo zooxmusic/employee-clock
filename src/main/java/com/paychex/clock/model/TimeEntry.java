@@ -1,7 +1,7 @@
 package com.paychex.clock.model;
 
 
-import com.paychex.clock.enums.TimeEntryState;
+import com.paychex.clock.enums.TimeEntryStates;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class TimeEntry implements Serializable {
 	private Date date;
 
 	@Enumerated(EnumType.STRING)
-	private TimeEntryState state;
+	private TimeEntryStates state;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Employee employee;

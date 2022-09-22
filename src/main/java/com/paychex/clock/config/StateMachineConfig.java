@@ -1,7 +1,7 @@
 package com.paychex.clock.config;
 
-import com.paychex.clock.enums.TimeEntryEvent;
-import com.paychex.clock.enums.TimeEntryState;
+import com.paychex.clock.enums.TimeEntryEvents;
+import com.paychex.clock.enums.TimeEntryStates;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Configuration;
@@ -16,53 +16,53 @@ import java.util.EnumSet;
 @Slf4j
 @EnableStateMachine
 @Configuration
-public class StateMachineConfig extends StateMachineConfigurerAdapter<TimeEntryState, TimeEntryEvent> {
+public class StateMachineConfig extends StateMachineConfigurerAdapter<TimeEntryStates, TimeEntryEvents> {
 
     @Override
-    public void configure(StateMachineStateConfigurer<TimeEntryState, TimeEntryEvent> states) throws Exception {
+    public void configure(StateMachineStateConfigurer<TimeEntryStates, TimeEntryEvents> states) throws Exception {
         states.withStates()
-                .initial(TimeEntryState.PUNCHED_OUT)
-                .states(EnumSet.allOf(TimeEntryState.class));
+                .initial(TimeEntryStates.NOT_WORKING)
+                .states(EnumSet.allOf(TimeEntryStates.class));
     }
 
     @Override
-    public void configure(StateMachineTransitionConfigurer<TimeEntryState, TimeEntryEvent> transitions) throws Exception {
+    public void configure(StateMachineTransitionConfigurer<TimeEntryStates, TimeEntryEvents> transitions) throws Exception {
         transitions
                 .withExternal()
-                .source(TimeEntryState.PUNCHED_OUT)
-                .target(TimeEntryState.PUNCHED_IN)
-                .event(TimeEntryEvent.PUNCH_IN)
+                .source(TimeEntryStates.NOT_WORKING)
+                .target(TimeEntryStates.WORKING)
+                .event(TimeEntryEvents.PUNCH_IN)
                 .and()
                 .withExternal()
-                .source(TimeEntryState.PUNCHED_IN)
-                .target(TimeEntryState.START_BREAK)
-                .event(TimeEntryEvent.START_BREAK)
+                .source(TimeEntryStates.WORKING)
+                .target(TimeEntryStates.ON_BREAK)
+                .event(TimeEntryEvents.TAKE_BREAK)
                 .and()
                 .withExternal()
-                .source(TimeEntryState.START_BREAK)
-                .target(TimeEntryState.END_BREAK)
-                .event(TimeEntryEvent.END_BREAK)
+                .source(TimeEntryStates.ON_BREAK)
+                .target(TimeEntryStates.WORKING)
+                .event(TimeEntryEvents.PUNCH_IN)
                 .and()
                 .withExternal()
-                .source(TimeEntryState.PUNCHED_IN)
-                .target(TimeEntryState.START_LUNCH)
-                .event(TimeEntryEvent.START_LUNCH)
+                .source(TimeEntryStates.WORKING)
+                .target(TimeEntryStates.ON_LUNCH)
+                .event(TimeEntryEvents.TAKE_LUNCH)
                 .and()
                 .withExternal()
-                .source(TimeEntryState.START_LUNCH)
-                .target(TimeEntryState.END_LUNCH)
-                .event(TimeEntryEvent.END_LUNCH)
+                .source(TimeEntryStates.ON_LUNCH)
+                .target(TimeEntryStates.WORKING)
+                .event(TimeEntryEvents.PUNCH_IN)
                 .and()
                 .withExternal()
-                .source(TimeEntryState.PUNCHED_IN)
-                .target(TimeEntryState.PUNCHED_OUT)
-                .event(TimeEntryEvent.PUNCH_OUT);
+                .source(TimeEntryStates.WORKING)
+                .target(TimeEntryStates.NOT_WORKING)
+                .event(TimeEntryEvents.PUNCH_OUT);
 
     }
-    @Override
-    public void configure(StateMachineConfigurationConfigurer<TimeEntryState, TimeEntryEvent> config) throws Exception {
-        config.withConfiguration()
-                .autoStartup(true)
-                .listener(new Listener());
-    }
+//    @Override
+//    public void configure(StateMachineConfigurationConfigurer<TimeEntryStates, TimeEntryEvents> config) throws Exception {
+//        config.withConfiguration()
+//                .autoStartup(true)
+//                .listener(new Listener());
+//    }
 }
