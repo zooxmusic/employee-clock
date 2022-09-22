@@ -1,50 +1,32 @@
 package com.paychex.clock.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "employees")
+@Table(name = "employee")
 public class Employee {
 	
 	@Id
 	@GeneratedValue(strategy =  GenerationType.IDENTITY)
 	private long id;
-	
-	@Column(name = "first_name")
+
+	@OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<TimeEntry> timeEntries;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Company company;
+
 	private String firstName;
-	
-	@Column(name = "last_name")
 	private String lastName;
-	
-	@Column(name = "email")
 	private String email;
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 }
