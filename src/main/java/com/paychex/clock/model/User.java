@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -36,7 +35,7 @@ public class User {
 	private String lastName;
 	private String email;
 	private String password;
-	
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(
 			name = "users_roles",
@@ -45,5 +44,6 @@ public class User {
 			inverseJoinColumns = @JoinColumn(
 				            name = "role_id", referencedColumnName = "id"))
 	private Collection<Role> roles;
-	
+
+
 }

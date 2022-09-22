@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import com.paychex.clock.dto.UserRegistrationDto;
+import com.paychex.clock.enums.ProfileEnum;
 import com.paychex.clock.model.Role;
 import com.paychex.clock.model.User;
 import com.paychex.clock.repository.UserRepository;
@@ -31,10 +32,14 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User save(UserRegistrationDto registrationDto) {
-		User user = new User(registrationDto.getFirstName(), 
-				registrationDto.getLastName(), registrationDto.getEmail(),
-				passwordEncoder.encode(registrationDto.getPassword()), Arrays.asList(new Role("ROLE_USER")));
-		
+		User user = User.builder()
+				.firstName(registrationDto.getFirstName())
+				.lastName(registrationDto.getLastName())
+				.email(registrationDto.getEmail())
+				.password(passwordEncoder.encode(registrationDto.getPassword()))
+				.roles(Arrays.asList(new Role(ProfileEnum.ROLE_USER.name())))
+				.build();
+
 		return userRepository.save(user);
 	}
 
