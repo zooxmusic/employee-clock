@@ -17,6 +17,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/*
+* I am using to demonstrate that I understand programming to an interface but given reflectively generated classes
+* I find if I am sure we do not need multiple implementations I would rather annotate the impl class and forgo defining
+* an explicit interface. If there could be multiple implementations then I can see the value although that can also
+* be injected at runtime with a configuration
+* */
+
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -24,8 +31,8 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
-	public UserServiceImpl(UserRepository userRepository) {
+
+	public UserServiceImpl(final UserRepository userRepository) {
 		super();
 		this.userRepository = userRepository;
 	}

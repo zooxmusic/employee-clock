@@ -1,14 +1,12 @@
 package com.paychex.clock.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
 public class UserRegistrationDto {
 	private String firstName;
 	private String lastName;

@@ -1,6 +1,7 @@
 package com.paychex.clock.controller;
 
 import com.paychex.clock.dto.UserRegistrationDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,10 +14,10 @@ import com.paychex.clock.service.UserService;
 @RequestMapping("/registration")
 public class UserRegistrationController {
 
-	private UserService userService;
+	private final UserService userService;
 
+	@Autowired
 	public UserRegistrationController(UserService userService) {
-		super();
 		this.userService = userService;
 	}
 	

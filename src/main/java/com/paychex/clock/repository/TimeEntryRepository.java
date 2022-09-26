@@ -17,7 +17,4 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TimeEntryRepository extends JpaRepository<TimeEntry, Long> {
 
     List<TimeEntry> findByEmployeeId(@Param("employeeId") final Long employeeId);
-
-    Page<TimeEntry> findByEmployeeId(@Param("employeeId") final Long employeeId, final Pageable pageable);
-
 }
