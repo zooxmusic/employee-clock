@@ -34,9 +34,6 @@ public class TimeEntryController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeEntryController.class);
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	@Value("${pagination.qtt_per_page}")
-	private int qttPerPage;
-
 	private final TimeEntryService timeEntryService;
 	private final EmployeeService employeeService;
 
@@ -74,7 +71,7 @@ public class TimeEntryController {
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Response<TimeEntryDto>> listById(@PathVariable("id") final Long id) {
 		LOGGER.info("Finding time entry by ID: {}", id);
-		final Response<TimeEntryDto> response = new Response<TimeEntryDto>();
+		final Response<TimeEntryDto> response = Response.create();
 		final Optional<TimeEntry> timeEntry = this.timeEntryService.find(id);
 
 		if (!timeEntry.isPresent()) {
@@ -83,7 +80,8 @@ public class TimeEntryController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		response.setData(this.convertTimeEntryToDto(timeEntry.get()));
+		response.setData(timeEntry.get().toDto());
+
 		return ResponseEntity.ok(response);
 	}
 
@@ -99,7 +97,7 @@ public class TimeEntryController {
 	public ResponseEntity<Response<TimeEntryDto>> add(@Valid @RequestBody final TimeEntryDto timeEntryDto,
 			final BindingResult result) throws ParseException {
 		LOGGER.info("Adding time entry: {}", timeEntryDto.toString());
-		final Response<TimeEntryDto> response = new Response<TimeEntryDto>();
+		final Response<TimeEntryDto> response = Response.create();
 		validateEmployee(timeEntryDto, result);
 		TimeEntry timeEntry = this.convertDtoToTimeEntry(timeEntryDto, result);
 
@@ -127,7 +125,7 @@ public class TimeEntryController {
 	public ResponseEntity<Response<TimeEntryDto>> update(@PathVariable("id") final Long id,
 			@Valid @RequestBody final TimeEntryDto timeEntryDto, final BindingResult result) throws ParseException {
 		LOGGER.info("Updating time entry: {}", timeEntryDto.toString());
-		final Response<TimeEntryDto> response = new Response<TimeEntryDto>();
+		final Response<TimeEntryDto> response = Response.create();
 		validateEmployee(timeEntryDto, result);
 		timeEntryDto.setId(id);
 		TimeEntry timeEntry = this.convertDtoToTimeEntry(timeEntryDto, result);
@@ -153,7 +151,7 @@ public class TimeEntryController {
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<Response<String>> remove(@PathVariable("id") final Long id) {
 		LOGGER.info("Removing time entry: {}", id);
-		final Response<String> response = new Response<String>();
+		final Response<String> response = Response.create();
 		final Optional<TimeEntry> timeEntry = this.timeEntryService.find(id);
 
 		if (!timeEntry.isPresent()) {
@@ -163,7 +161,7 @@ public class TimeEntryController {
 		}
 
 		this.timeEntryService.remove(id);
-		return ResponseEntity.ok(new Response<String>());
+		return ResponseEntity.ok(Response.create());
 	}
 
 	/**

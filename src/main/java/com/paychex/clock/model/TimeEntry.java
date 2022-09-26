@@ -1,6 +1,7 @@
 package com.paychex.clock.model;
 
 
+import com.paychex.clock.dto.TimeEntryDto;
 import com.paychex.clock.enums.TimeEntryStates;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
@@ -18,7 +20,7 @@ import java.util.Date;
 @Entity
 @Table(name = "time_entry")
 public class TimeEntry implements Serializable {
-
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -38,6 +40,16 @@ public class TimeEntry implements Serializable {
 	private Date createdAt;
 	private Date updatedAt;
 
+	public TimeEntryDto toDto() {
+		return TimeEntryDto.builder()
+				.id(getId())
+				.date(dateFormat.format(getDate()))
+				.state(getState().name())
+				.description(getDescription())
+				.location(getLocation())
+				.employeeId(getEmployee().getId())
+				.build();
+	}
 	@PreUpdate
 	public void preUpdate() {
 		updatedAt = new Date();

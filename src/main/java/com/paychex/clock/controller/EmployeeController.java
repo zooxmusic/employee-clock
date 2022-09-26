@@ -68,91 +68,50 @@ public class EmployeeController {
 	}
 	@PostMapping("/punchIn")
 	public String punchIn(@ModelAttribute("employee") Employee employee) {
-		// save employee to database
-
-		System.out.println(employee);
-		System.out.println("PUNCH IN");
-
+		LOGGER.info("PUNCH IN");
 		return "time-clock";
 	}
 
 	@PostMapping("/punchOut")
 	public String punchOut(@ModelAttribute("employee") Employee employee) {
-		// save employee to database
-
-		System.out.println(employee);
-		System.out.println("PUNCH OUT");
-
+		LOGGER.info("PUNCH OUT");
 		return "time-clock";
 	}
 
 	@PostMapping("/takeBreak")
 	public String takeBreak(@ModelAttribute("employee") Employee employee) {
-		// save employee to database
-
-		System.out.println(employee);
-		System.out.println("TAKE BREAK");
+		LOGGER.info("TAKE BREAK");
 
 		return "time-clock";
 	}
 
 	@PostMapping("/takeLunch")
 	public String takeLunch(@ModelAttribute("employee") Employee employee) {
-		// save employee to database
 
-		System.out.println(employee);
-		System.out.println("TAKE BREAK");
-
+		LOGGER.info("TAKE LUNCH");
 		return "time-clock";
 	}
 
 
-	@PostMapping("/saveEmployee")
-	public String saveEmployee(@ModelAttribute("employee") Employee employee) {
-		// save employee to database
+	@PostMapping("/save")
+	public String save(@ModelAttribute("employee") Employee employee) {
 		employeeService.save(employee);
 		return "redirect:/";
 	}
 	
-	@GetMapping("/showFormForUpdate/{id}")
-	public String showFormForUpdate(@PathVariable ( value = "id") long id, Model model) {
+	@GetMapping("/update/{id}")
+	public String update(@PathVariable ( value = "id") long id, Model model) {
 		
-		// get employee from the service
 		Optional<Employee> employee = employeeService.find(id);
 		
-		// set employee as a model attribute to pre-populate the form
 		model.addAttribute("employee", employee.get());
-		return "update_employee";
+		return "update-employee";
 	}
 	
-	@GetMapping("/deleteEmployee/{id}")
-	public String deleteEmployee(@PathVariable (value = "id") long id) {
-		
-		// call delete employee method 
+	@GetMapping("/delete/{id}")
+	public String delete(@PathVariable (value = "id") long id) {
+
 		this.employeeService.delete(id);
 		return "redirect:/";
 	}
-	
-//
-//	@GetMapping("/page/{pageNo}")
-//	public String findPaginated(@PathVariable (value = "pageNo") int pageNo,
-//			@RequestParam("sortField") String sortField,
-//			@RequestParam("sortDir") String sortDir,
-//			Model model) {
-//		int pageSize = 5;
-//
-//		Page<Employee> page = employeeService.findPaginated(pageNo, pageSize, sortField, sortDir);
-//		List<Employee> listEmployees = page.getContent();
-//
-//		model.addAttribute("currentPage", pageNo);
-//		model.addAttribute("totalPages", page.getTotalPages());
-//		model.addAttribute("totalItems", page.getTotalElements());
-//
-//		model.addAttribute("sortField", sortField);
-//		model.addAttribute("sortDir", sortDir);
-//		model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-//
-//		model.addAttribute("listEmployees", listEmployees);
-//		return "index";
-//	}
 }

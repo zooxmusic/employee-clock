@@ -1,33 +1,20 @@
 package com.paychex.clock.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class Response<T> {
 
-	private T data;
-	private List<String> errors;
+	private T data = null;
+	private List<String> errors = new ArrayList<String>();
 
-	public Response() {
+	private Response() {}
+
+	public static <T> Response<T> create() {
+		return new Response<T>();
 	}
-
-	public T getData() {
-		return data;
-	}
-
-	public void setData(T data) {
-		this.data = data;
-	}
-
-	public List<String> getErrors() {
-		if (this.errors == null) {
-			this.errors = new ArrayList<String>();
-		}
-		return errors;
-	}
-
-	public void setErrors(List<String> errors) {
-		this.errors = errors;
-	}
-
 }
