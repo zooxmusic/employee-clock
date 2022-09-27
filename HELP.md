@@ -8,7 +8,9 @@ to run you need java installed and then you can simply run the following from a 
 I have not used any UI in a very long time and I have been known to spend an inordinate amount of time on UI components so I admit they are not to my standards but I don't believe that is what you seek.
 
 
-I also started using the spring-boot state machine for Employee Working States. I did follow the approach that you have 4 states
+I also started using the spring-boot state machine for Employee Working States but there is something simple I am missing on implementing the spring version so I did a lightweight hand-rolled version. 
+
+I did follow the approach that you have 4 states
 
 NOT_WORKING
 WORKING
