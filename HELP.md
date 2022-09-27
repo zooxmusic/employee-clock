@@ -1,4 +1,9 @@
 # For My Assesment
+to run
+
+```
+./gradlew bootRun
+```
 
 I have not used any UI in a very long time and I have been known to spend an inordinate amount of time on UI components so I admit they are not to my standards but I don't believe that is what you seek.
 
