@@ -3,6 +3,9 @@ package com.paychex.clock.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.paychex.clock.dto.CurrentStateDto;
+import com.paychex.clock.enums.TimeEntryStates;
+import com.paychex.clock.factory.TimeEntryFactory;
 import com.paychex.clock.model.Employee;
 import com.paychex.clock.model.TimeEntry;
 import com.paychex.clock.service.TimeEntryService;
@@ -12,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.paychex.clock.service.EmployeeService;
 
@@ -48,50 +48,71 @@ public class EmployeeController {
 	public String showNewEmployeeForm(Model model) {
 		// create model attribute to bind form data
 		Employee employee = new Employee();
+		employee.setCurrentState(TimeEntryStates.NOT_WORKING);
 		model.addAttribute("employee", employee);
 		return "new-employee";
+	}
+
+	@GetMapping("/showTimeEntries/{id}")
+	public String showTimeEntries(@PathVariable ( value = "id") long id, Model model) {
+		LOGGER.info("showTimeClock...");
+
+		final List<TimeEntry> timeEntries = this.timeEntryService.findByEmployeeId(id);
+		model.addAttribute("timeEntries", timeEntries);
+
+		return "time-entries";
 	}
 
 	@GetMapping("/showTimeClock/{id}")
 	public String showTimeClock(@PathVariable ( value = "id") long id, Model model) {
 		LOGGER.info("showTimeClock...");
-		Optional<Employee> employee = employeeService.find(id);
 
-		LOGGER.info("Employee: ",  employee);
+		final Optional<Employee> optionalEmployee = this.employeeService.find(id);
 
-		List<TimeEntry> timeEntries = timeEntryService.findByEmployeeId(id);
-		// set employee as a model attribute to pre-populate the form
-		model.addAttribute("employee", employee.get());
-		model.addAttribute("timeEntries", timeEntries);
+		if(optionalEmployee.isPresent()) {
+			Employee employee = optionalEmployee.get();
+			CurrentStateDto currentStateDto = CurrentStateDto.create(employee);
+			final List<TimeEntry> timeEntries = this.timeEntryService.findByEmployeeId(employee.getId());
 
-		return "time-entry";
+
+			this.timeEntryService.save(TimeEntry.fromDto(currentStateDto));
+
+			model.addAttribute("employee", employee);
+			model.addAttribute("currentState", currentStateDto);
+			model.addAttribute("timeEntries", timeEntries);
+		} else {
+			model.addAttribute("errors", "Employee not found");
+		}
+
+		return "time-clock";
 	}
-	@PostMapping("/punchIn")
-	public String punchIn(@ModelAttribute("employee") Employee employee) {
+
+	@GetMapping("/punchIn/{id}")
+	public String punchIn(@PathVariable ( value = "id") long id, Model model) throws Exception {
 		LOGGER.info("PUNCH IN");
-		return "time-clock";
+		employeeService.punchIn(id);
+		return "redirect:/showTimeClock/" + id;
 	}
 
-	@PostMapping("/punchOut")
-	public String punchOut(@ModelAttribute("employee") Employee employee) {
+	@GetMapping("/punchOut/{id}")
+	public String punchOut(@PathVariable ( value = "id") long id, Model model) throws Exception {
 		LOGGER.info("PUNCH OUT");
-		return "time-clock";
+		employeeService.punchOut(id);
+		return "redirect:/showTimeClock/" + id;
 	}
-
-	@PostMapping("/takeBreak")
-	public String takeBreak(@ModelAttribute("employee") Employee employee) {
+	@GetMapping("/takeBreak/{id}")
+	public String takeBreak(@PathVariable ( value = "id") long id, Model model) throws Exception {
 		LOGGER.info("TAKE BREAK");
-
-		return "time-clock";
+		employeeService.takeBreak(id);
+		return "redirect:/showTimeClock/" + id;
 	}
 
-	@PostMapping("/takeLunch")
-	public String takeLunch(@ModelAttribute("employee") Employee employee) {
-
+	@GetMapping("/takeLunch/{id}")
+	public String takeLunch(@PathVariable ( value = "id") long id, Model model) throws Exception {
 		LOGGER.info("TAKE LUNCH");
-		return "time-clock";
+		employeeService.takeLunch(id);
+		return "redirect:/showTimeClock/" + id;
 	}
-
 
 	@PostMapping("/save")
 	public String save(@ModelAttribute("employee") Employee employee) {

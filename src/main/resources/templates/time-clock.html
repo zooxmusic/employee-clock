@@ -2,38 +2,77 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="ISO-8859-1">
-    <title>Simple Time Clock</title>
+    <title>Employee Management System</title>
+
     <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
           crossorigin="anonymous">
+
 </head>
 <body>
-<div class="container">
-    <h1>Time Entry</h1>
-    <hr>
+
+<!-- create navigation bar ( header) -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/}">Employee Management System</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<br>
+<span th:if="${errors}"  th:text="${errors}"></span>
+<br>
+
+
+<div class="container my-2">
+    <h1>Time Clock</h1>
+    <b>Status</b>: </h2> <span th:text="${currentState.state}"></span>
+    <br/>
     <table border="0" class="table table-responsive-md">
         <tbody>
-          <tr>
-               <td>
-                <a th:href="@{/punchIn/{id}(id=${employee.id})}" class="btn btn-primary">Punch In</a>
-               </td>
-              <td>
-                <a th:href="@{/takeBreak/{id}(id=${employee.id})}" class="btn btn-primary">Take Break</a>
-              </td>
-              <td>
-                <a th:href="@{/takeLunch/{id}(id=${employee.id})}" class="btn btn-primary">Take Lunch</a>
+        <tr>
+            <td>
+                <a th:href="@{/punchIn/{id}(id=${employee.id})}" class="btn btn-primary" th:disabled="${!currentState.canPunchIn()}">Punch In</a>
             </td>
-              <td>
-                  <a th:href="@{/punchOut/{id}(id=${employee.id})}" class="btn btn-primary">Punch Out</a>
-              </td>
+            <td>
+                <a th:href="@{/takeBreak/{id}(id=${employee.id})}" class="btn btn-primary" th:disabled="${!currentState.canTakeBreak}">Take Break</a>
+            </td>
+            <td>
+                <a th:href="@{/takeLunch/{id}(id=${employee.id})}" class="btn btn-primary" th:disabled="${!currentState.canTakeLunch}">Take Lunch</a>
+            </td>
+            <td>
+                <a th:href="@{/punchOut/{id}(id=${employee.id})}" class="btn btn-primary" th:disabled="${!currentState.canPunchOut}">Punch Out</a>
+            </td>
         </tr>
         </tbody>
     </table>
 
-    <hr>
-
-    <a th:href = "@{/}"> Back to Employee List</a>
+</div>
+<div class="container my-2">
+    <h1>Employees Time Entry History</h1>
+    <hr/>
+    <table border="1" class = "table table-striped table-responsive-md">
+        <tbody>
+        <tr th:each="timeEntry : ${timeEntries}">
+            <td th:text="${timeEntry.date}"></td>
+            <td th:text="${timeEntry.state}"></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

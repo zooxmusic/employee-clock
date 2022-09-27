@@ -1,6 +1,9 @@
 package com.paychex.clock.service;
 
 
+import com.paychex.clock.enums.TimeEntryStates;
+import com.paychex.clock.factory.TimeEntryFactory;
+import com.paychex.clock.model.Employee;
 import com.paychex.clock.model.TimeEntry;
 import com.paychex.clock.repository.TimeEntryRepository;
 import org.slf4j.Logger;
@@ -30,6 +33,29 @@ public class TimeEntryService {
 	public List<TimeEntry> findByEmployeeId(final Long employeeId) {
 		LOGGER.info("Finding time entries by employee id {}", employeeId);
 		return this.timeEntryRepository.findByEmployeeId(employeeId);
+	}
+
+	public TimeEntry findOrCreateCurrentByEmployee(final Employee employee) {
+		LOGGER.info("Finding time entries for today by employee id {}", employee.getId());
+
+		TimeEntry timeEntry = this.timeEntryRepository.findTodayByEmployeeId(employee.getId());
+		// if one doesn't exist for today, create it and save it now
+//		if(null == timeEntry) {
+//			timeEntry = TimeEntryFactory.createFromEmployee(employee);
+//			timeEntry = save(timeEntry);
+//		}
+		return timeEntry;
+	}
+
+	public TimeEntry punchIn(final Long id) {
+		Optional<TimeEntry> timeEntryOptional = this.find(id);
+		if(!timeEntryOptional.isPresent()) {
+			return null;
+		}
+		TimeEntry timeEntry = timeEntryOptional.get();
+		timeEntry.setState(TimeEntryStates.WORKING);
+
+		return null;
 	}
 
 	@Cacheable("timeEntryById")

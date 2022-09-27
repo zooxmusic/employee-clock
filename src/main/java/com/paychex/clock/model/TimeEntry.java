@@ -1,7 +1,7 @@
 package com.paychex.clock.model;
 
 
-import com.paychex.clock.dto.TimeEntryDto;
+import com.paychex.clock.dto.CurrentStateDto;
 import com.paychex.clock.enums.TimeEntryStates;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,13 +20,13 @@ import java.util.Date;
 @Entity
 @Table(name = "time_entry")
 public class TimeEntry implements Serializable {
-	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	//private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "date", nullable = false)
+	//@Temporal(TemporalType.TIMESTAMP)
+	//@Column(name = "date", nullable = false)
 	private Date date;
 
 	@Enumerated(EnumType.STRING)
@@ -35,19 +35,14 @@ public class TimeEntry implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Employee employee;
 
-	private String description;
-	private String location;
 	private Date createdAt;
 	private Date updatedAt;
 
-	public TimeEntryDto toDto() {
-		return TimeEntryDto.builder()
-				.id(getId())
-				.date(dateFormat.format(getDate()))
-				.state(getState().name())
-				.description(getDescription())
-				.location(getLocation())
-				.employeeId(getEmployee().getId())
+	public static TimeEntry fromDto(CurrentStateDto dto) {
+		return TimeEntry.builder()
+				.date(dto.getDate())
+				.state(dto.getState())
+				.employee(dto.getEmployee())
 				.build();
 	}
 	@PreUpdate
@@ -58,8 +53,8 @@ public class TimeEntry implements Serializable {
 	@PrePersist
 	public void prePersist() {
 		final Date date = new Date();
-		createdAt = date;
-		updatedAt = date;
+		this.createdAt = date;
+		this.updatedAt = date;
 	}
 
 }

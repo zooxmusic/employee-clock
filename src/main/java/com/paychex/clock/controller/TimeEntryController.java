@@ -1,18 +1,16 @@
 package com.paychex.clock.controller;
 
 
-import com.paychex.clock.dto.TimeEntryDto;
-import com.paychex.clock.enums.TimeEntryStates;
+import com.paychex.clock.dto.CurrentStateDto;
+import com.paychex.clock.factory.TimeEntryFactory;
 import com.paychex.clock.model.Employee;
 import com.paychex.clock.model.TimeEntry;
 import com.paychex.clock.response.Response;
 import com.paychex.clock.service.EmployeeService;
 import com.paychex.clock.service.TimeEntryService;
-import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
@@ -27,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/time-entries")
+@RequestMapping("/time-clock")
 @CrossOrigin(origins = "*")
 public class TimeEntryController {
 
@@ -56,10 +54,13 @@ public class TimeEntryController {
 		final Optional<Employee> employee = this.employeeService.find(employeeId);
 		final List<TimeEntry> timeEntries = this.timeEntryService.findByEmployeeId(employeeId);
 
-		model.addAttribute("employee", employee.get());
-		model.addAttribute("timeEntries", timeEntries);
+		if(employee.isPresent()) {
+			model.addAttribute("timeEntries", timeEntries);
+		} else {
+			model.addAttribute("errors", "Employee not found");
+		}
 
-		return "time-entries";
+		return "time-clock";
 	}
 
 	/**
@@ -69,9 +70,9 @@ public class TimeEntryController {
 	 * @return ResponseEntity<Response<TimeEntryDto>>
 	 */
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Response<TimeEntryDto>> listById(@PathVariable("id") final Long id) {
+	public ResponseEntity<Response<CurrentStateDto>> listById(@PathVariable("id") final Long id) {
 		LOGGER.info("Finding time entry by ID: {}", id);
-		final Response<TimeEntryDto> response = Response.create();
+		final Response<CurrentStateDto> response = Response.create();
 		final Optional<TimeEntry> timeEntry = this.timeEntryService.find(id);
 
 		if (!timeEntry.isPresent()) {
@@ -80,7 +81,7 @@ public class TimeEntryController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		response.setData(timeEntry.get().toDto());
+		//response.setData(TimeEntryFactory.toDto(timeEntry.get()));
 
 		return ResponseEntity.ok(response);
 	}
@@ -88,18 +89,18 @@ public class TimeEntryController {
 	/**
 	 * Adding a new time entry.
 	 * 
-	 * @param timeEntryDto
+	 * @param currentStateDto
 	 * @param result
 	 * @return ResponseEntity<Response<TimeEntryDto>>
 	 * @throws ParseException
 	 */
 	@PostMapping
-	public ResponseEntity<Response<TimeEntryDto>> add(@Valid @RequestBody final TimeEntryDto timeEntryDto,
-			final BindingResult result) throws ParseException {
-		LOGGER.info("Adding time entry: {}", timeEntryDto.toString());
-		final Response<TimeEntryDto> response = Response.create();
-		validateEmployee(timeEntryDto, result);
-		TimeEntry timeEntry = this.convertDtoToTimeEntry(timeEntryDto, result);
+	public ResponseEntity<Response<CurrentStateDto>> add(@Valid @RequestBody final CurrentStateDto currentStateDto,
+														 final BindingResult result) throws ParseException {
+		LOGGER.info("Adding time entry: {}", currentStateDto.toString());
+		final Response<CurrentStateDto> response = Response.create();
+		validateEmployee(currentStateDto, result);
+		TimeEntry timeEntry = this.convertDtoToTimeEntry(currentStateDto, result);
 
 		if (result.hasErrors()) {
 			LOGGER.error("Error validating time entry: {}", result.getAllErrors());
@@ -116,19 +117,19 @@ public class TimeEntryController {
 	 * Update time entry data.
 	 * 
 	 * @param id
-	 * @param timeEntryDto
+	 * @param currentStateDto
 	 * @param result
 	 * @return ResponseEntity<Response<TimeEntryDto>>
 	 * @throws ParseException
 	 */
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Response<TimeEntryDto>> update(@PathVariable("id") final Long id,
-			@Valid @RequestBody final TimeEntryDto timeEntryDto, final BindingResult result) throws ParseException {
-		LOGGER.info("Updating time entry: {}", timeEntryDto.toString());
-		final Response<TimeEntryDto> response = Response.create();
-		validateEmployee(timeEntryDto, result);
-		timeEntryDto.setId(id);
-		TimeEntry timeEntry = this.convertDtoToTimeEntry(timeEntryDto, result);
+	public ResponseEntity<Response<CurrentStateDto>> update(@PathVariable("id") final Long id,
+															@Valid @RequestBody final CurrentStateDto currentStateDto, final BindingResult result) throws ParseException {
+		LOGGER.info("Updating time entry: {}", currentStateDto.toString());
+		final Response<CurrentStateDto> response = Response.create();
+		validateEmployee(currentStateDto, result);
+
+		TimeEntry timeEntry = this.convertDtoToTimeEntry(currentStateDto, result);
 
 		if (result.hasErrors()) {
 			LOGGER.error("Error validating time entry: {}", result.getAllErrors());
@@ -167,20 +168,20 @@ public class TimeEntryController {
 	/**
 	 * Validate a employee, verifying if it exists and if its valid.
 	 * 
-	 * @param timeEntryDto
+	 * @param currentStateDto
 	 * @param result
 	 */
-	private void validateEmployee(final TimeEntryDto timeEntryDto, final BindingResult result) {
-		if (timeEntryDto.getEmployeeId() == null) {
-			result.addError(new ObjectError("employee", "Employee not informed."));
-			return;
-		}
+	private void validateEmployee(final CurrentStateDto currentStateDto, final BindingResult result) {
+//		if (currentStateDto.getEmployeeId() == null) {
+//			result.addError(new ObjectError("employee", "Employee not informed."));
+//			return;
+//		}
 
-		LOGGER.info("Validating employee id {}: ", timeEntryDto.getEmployeeId());
-		final Optional<Employee> employee = this.employeeService.find(timeEntryDto.getEmployeeId());
-		if (!employee.isPresent()) {
-			result.addError(new ObjectError("employee", "Employee not found. Nonexistent ID."));
-		}
+//		LOGGER.info("Validating employee id {}: ", currentStateDto.getEmployeeId());
+//		final Optional<Employee> employee = this.employeeService.find(currentStateDto.getEmployeeId());
+//		if (!employee.isPresent()) {
+//			result.addError(new ObjectError("employee", "Employee not found. Nonexistent ID."));
+//		}
 	}
 
 
@@ -190,50 +191,40 @@ public class TimeEntryController {
 	 * @param timeEntry
 	 * @return TimeEntryDto
 	 */
-	private TimeEntryDto convertTimeEntryToDto(final TimeEntry timeEntry) {
-		return TimeEntryDto.builder()
-				.id(timeEntry.getId())
-				.date(this.dateFormat.format(timeEntry.getDate()))
-				.state(timeEntry.getState().name())
-				.description(timeEntry.getDescription())
-				.location(timeEntry.getLocation())
-				.employeeId(timeEntry.getEmployee().getId())
+	private CurrentStateDto convertTimeEntryToDto(final TimeEntry timeEntry) {
+		return CurrentStateDto.builder()
+				.date(timeEntry.getDate())
+				.state(timeEntry.getState())
 				.build();
 	}
 
 	/**
 	 * Converts a time entry dto into a time entry.
 	 *
-	 * @param timeEntryDto
+	 * @param currentStateDto
 	 * @param result
 	 * @return TimeEntry
 	 * @throws ParseException
 	 */
-	private TimeEntry convertDtoToTimeEntry(final TimeEntryDto timeEntryDto, final BindingResult result)
+	private TimeEntry convertDtoToTimeEntry(final CurrentStateDto currentStateDto, final BindingResult result)
 			throws ParseException {
 		TimeEntry timeEntry = new TimeEntry();
 
-		if (null != timeEntryDto.getId()) {
-			final Optional<TimeEntry> timeEntryFound = this.timeEntryService.find(timeEntryDto.getId());
-			if (timeEntryFound.isPresent()) {
-				timeEntry = timeEntryFound.get();
-			} else {
-				result.addError(new ObjectError("timeEntry", "Time Entry not found."));
-			}
-		} else {
-			timeEntry.setEmployee(new Employee());
-			timeEntry.getEmployee().setId(timeEntryDto.getEmployeeId());
-		}
-
-		timeEntry.setDescription(timeEntryDto.getDescription());
-		timeEntry.setLocation(timeEntryDto.getLocation());
-		timeEntry.setDate(this.dateFormat.parse(timeEntryDto.getDate()));
-
-		if (EnumUtils.isValidEnum(TimeEntryStates.class, timeEntryDto.getState())) {
-			timeEntry.setState(TimeEntryStates.valueOf(timeEntryDto.getState()));
-		} else {
-			result.addError(new ObjectError("state", "Invalid state."));
-		}
+//		if (null != currentStateDto.getId()) {
+//			final Optional<TimeEntry> timeEntryFound = this.timeEntryService.find(currentStateDto.getId());
+//			if (timeEntryFound.isPresent()) {
+//				timeEntry = timeEntryFound.get();
+//			} else {
+//				result.addError(new ObjectError("timeEntry", "Time Entry not found."));
+//			}
+//		} else {
+//			timeEntry.setEmployee(new Employee());
+//			timeEntry.getEmployee().setId(currentStateDto.getEmployeeId());
+//		}
+//
+//		timeEntry.setDescription(currentStateDto.getDescription());
+		timeEntry.setDate(currentStateDto.getDate());
+		timeEntry.setState(currentStateDto.getState());
 
 		return timeEntry;
 	}

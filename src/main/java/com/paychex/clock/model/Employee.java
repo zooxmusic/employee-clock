@@ -1,6 +1,7 @@
 package com.paychex.clock.model;
 
 import com.paychex.clock.enums.ProfileEnum;
+import com.paychex.clock.enums.TimeEntryStates;
 import com.paychex.clock.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +21,6 @@ import java.util.List;
 @Table(name = "employee")
 public class Employee implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -29,14 +28,13 @@ public class Employee implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private ProfileEnum profile;
 
-	@OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<TimeEntry> timeEntries;
+	@Enumerated(EnumType.STRING)
+	private TimeEntryStates currentState;
 
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String password;
-	private String cpf;
 	private Date createdAt;
 	private Date updatedAt;
 
@@ -48,6 +46,7 @@ public class Employee implements Serializable {
 	@PrePersist
 	public void prePersist() {
 		final Date date = new Date();
+		currentState = TimeEntryStates.NOT_WORKING;
 		createdAt = date;
 		updatedAt = date;
 	}
