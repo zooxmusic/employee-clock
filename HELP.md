@@ -1,5 +1,5 @@
 # For My Assesment
-to run
+to run you need java installed and then you can simply run the following from a command prompt
 
 ```
 ./gradlew bootRun
