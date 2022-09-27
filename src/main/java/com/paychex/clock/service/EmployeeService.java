@@ -42,6 +42,7 @@ public class EmployeeService {
 			save(employee);
 		}
 	}
+
 	public void punchIn(final Long id) throws Exception {
 		this.saveState(id, TimeEntryStates.WORKING);
 	}

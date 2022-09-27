@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.paychex.clock.dto.CurrentStateDto;
 import com.paychex.clock.enums.TimeEntryStates;
-import com.paychex.clock.factory.TimeEntryFactory;
 import com.paychex.clock.model.Employee;
 import com.paychex.clock.model.TimeEntry;
 import com.paychex.clock.service.TimeEntryService;

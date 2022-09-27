@@ -2,7 +2,6 @@ package com.paychex.clock.model;
 
 import com.paychex.clock.enums.ProfileEnum;
 import com.paychex.clock.enums.TimeEntryStates;
-import com.paychex.clock.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Builder
