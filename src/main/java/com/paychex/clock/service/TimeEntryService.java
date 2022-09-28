@@ -14,30 +14,30 @@ import java.util.List;
 @Service
 public class TimeEntryService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TimeEntryService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeEntryService.class);
 
-	private final TimeEntryRepository timeEntryRepository;
+    private final TimeEntryRepository timeEntryRepository;
 
-	@Autowired
-	public TimeEntryService(final TimeEntryRepository timeEntryRepository) {
-		this.timeEntryRepository = timeEntryRepository;
-	}
+    @Autowired
+    public TimeEntryService(final TimeEntryRepository timeEntryRepository) {
+        this.timeEntryRepository = timeEntryRepository;
+    }
 
-	public List<TimeEntry> findByEmployeeId(final Long employeeId) {
-		LOGGER.info("Finding time entries by employee id {}", employeeId);
-		return this.timeEntryRepository.findDescendingByEmployeeId(employeeId);
-	}
+    public List<TimeEntry> findByEmployeeId(final Long employeeId) {
+        LOGGER.info("Finding time entries by employee id {}", employeeId);
+        return this.timeEntryRepository.findDescendingByEmployeeId(employeeId);
+    }
 
-	@CachePut("timeEntryById")
-	public TimeEntry save(final TimeEntry timeEntry) {
-		LOGGER.info("Persisting the time entry: {}", timeEntry);
-		return this.timeEntryRepository.save(timeEntry);
-	}
+    @CachePut("timeEntryById")
+    public TimeEntry save(final TimeEntry timeEntry) {
+        LOGGER.info("Persisting the time entry: {}", timeEntry);
+        return this.timeEntryRepository.save(timeEntry);
+    }
 
-	public void remove(final Long id) {
-		LOGGER.info("Removing the time entry id {}", id);
-		this.timeEntryRepository.deleteById(id);
-	}
+    public void remove(final Long id) {
+        LOGGER.info("Removing the time entry id {}", id);
+        this.timeEntryRepository.deleteById(id);
+    }
 
 }
 

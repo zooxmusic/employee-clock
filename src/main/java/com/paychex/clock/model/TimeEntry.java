@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
@@ -20,39 +19,40 @@ import java.util.Date;
 @Entity
 @Table(name = "time_entry")
 public class TimeEntry implements Serializable {
-	//private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private TimeEntryStates state;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Employee employee;
+    @Enumerated(EnumType.STRING)
+    private TimeEntryStates state;
 
-	private Date date;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Employee employee;
 
-	private Date createdAt;
-	private Date updatedAt;
+    private Date date;
 
-	public static TimeEntry fromDto(CurrentStateDto dto) {
-		return TimeEntry.builder()
-				.date(dto.getDate())
-				.state(dto.getState())
-				.employee(dto.getEmployee())
-				.build();
-	}
-	@PreUpdate
-	public void preUpdate() {
-		updatedAt = new Date();
-	}
+    private Date createdAt;
+    private Date updatedAt;
 
-	@PrePersist
-	public void prePersist() {
-		final Date date = new Date();
-		this.createdAt = date;
-		this.updatedAt = date;
-	}
+    public static TimeEntry fromDto(CurrentStateDto dto) {
+        return TimeEntry.builder()
+                .date(dto.getDate())
+                .state(dto.getState())
+                .employee(dto.getEmployee())
+                .build();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = new Date();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        final Date date = new Date();
+        this.createdAt = date;
+        this.updatedAt = date;
+    }
 
 }

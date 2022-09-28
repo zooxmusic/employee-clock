@@ -19,34 +19,34 @@ import java.util.Date;
 @Table(name = "employee")
 public class Employee implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private ProfileEnum profile;
+    @Enumerated(EnumType.STRING)
+    private ProfileEnum profile;
 
-	@Enumerated(EnumType.STRING)
-	private TimeEntryStates currentState;
+    @Enumerated(EnumType.STRING)
+    private TimeEntryStates currentState;
 
-	private String firstName;
-	private String lastName;
-	private String email;
-	private String password;
-	private Date createdAt;
-	private Date updatedAt;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private Date createdAt;
+    private Date updatedAt;
 
-	@PreUpdate
-	public void preUpdate() {
-		updatedAt = new Date();
-	}
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = new Date();
+    }
 
-	@PrePersist
-	public void prePersist() {
-		final Date date = new Date();
-		currentState = TimeEntryStates.NOT_WORKING;
-		createdAt = date;
-		updatedAt = date;
-	}
+    @PrePersist
+    public void prePersist() {
+        final Date date = new Date();
+        currentState = TimeEntryStates.NOT_WORKING;
+        createdAt = date;
+        updatedAt = date;
+    }
 
 }
