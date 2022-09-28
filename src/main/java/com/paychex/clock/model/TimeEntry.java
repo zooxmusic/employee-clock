@@ -25,15 +25,13 @@ public class TimeEntry implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	//@Temporal(TemporalType.TIMESTAMP)
-	//@Column(name = "date", nullable = false)
-	private Date date;
-
 	@Enumerated(EnumType.STRING)
 	private TimeEntryStates state;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Employee employee;
+
+	private Date date;
 
 	private Date createdAt;
 	private Date updatedAt;
