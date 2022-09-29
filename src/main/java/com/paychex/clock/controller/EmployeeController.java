@@ -54,16 +54,6 @@ public class EmployeeController {
         return "new-employee";
     }
 
-    @GetMapping("/showTimeEntries/{id}")
-    public String showTimeEntries(@PathVariable(value = "id") long id, Model model) {
-        LOGGER.info("showTimeClock...");
-
-        final List<TimeEntry> timeEntries = this.timeEntryService.findByEmployeeId(id);
-        model.addAttribute("timeEntries", timeEntries);
-
-        return "time-entries";
-    }
-
     @GetMapping("/showTimeClock/{id}")
     public String showTimeClock(@PathVariable(value = "id") long id, Model model) {
         LOGGER.info("showTimeClock...");
