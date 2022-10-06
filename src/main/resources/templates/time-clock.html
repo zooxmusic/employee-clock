@@ -47,7 +47,7 @@
         <tr>
             <td>
                 <a th:href="@{/punchIn/{id}(id=${employee.id})}" class="btn btn-primary"
-                   th:disabled="${!currentState.canPunchIn()}">Punch In</a>
+                   th:disabled="${!currentState.canPunchIn()}" disabled>Punch In</a>
             </td>
             <td>
                 <a th:href="@{/takeBreak/{id}(id=${employee.id})}" class="btn btn-primary"
